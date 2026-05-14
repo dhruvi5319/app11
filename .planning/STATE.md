@@ -52,6 +52,8 @@ Progress: [█████░░░░░] 50%
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01-foundation P01 | 3min | 2 tasks | 15 files |
+| Phase 01-foundation P02 | 5min | 2 tasks | 8 files |
 
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|

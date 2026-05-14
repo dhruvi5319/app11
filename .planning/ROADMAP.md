@@ -20,7 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ## Phase Details
 
 ### Phase 1: Foundation
-**Status**: passed
+**Status**: Complete — 2026-05-14
 **Goal**: A working project scaffold with the full data layer ready — no user-facing features yet, but everything downstream phases build on
 **Depends on**: Nothing (first phase)
 **Requirements**: None (infrastructure phase — enables TASK-01 through TASK-05)
@@ -31,8 +31,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Vite + React + TypeScript project scaffold with CSS Modules, ESLint, Prettier, Vitest
-- [ ] 01-02-PLAN.md — Data layer: Task types, UUID utility, localStorage adapter, client API module (TDD)
+- [x] 01-01-PLAN.md — Vite + React + TypeScript project scaffold with CSS Modules, ESLint, Prettier, Vitest
+- [x] 01-02-PLAN.md — Data layer: Task types, UUID utility, localStorage adapter, client API module (TDD)
 
 ### Phase 2: Task Capture & Display
 **Status**: passed
