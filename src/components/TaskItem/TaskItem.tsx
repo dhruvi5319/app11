@@ -7,7 +7,7 @@ interface TaskItemProps {
   onDelete?: (id: string) => void
 }
 
-export function TaskItem({ task, onToggle, onDelete: _onDelete }: TaskItemProps) {
+export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
   return (
     <li className={styles.item}>
       <input
@@ -20,6 +20,14 @@ export function TaskItem({ task, onToggle, onDelete: _onDelete }: TaskItemProps)
       <span className={task.completed ? styles.titleCompleted : styles.title}>
         {task.title}
       </span>
+      <button
+        type="button"
+        onClick={() => onDelete?.(task.id)}
+        aria-label={`Delete "${task.title}"`}
+        className={styles.deleteButton}
+      >
+        Delete
+      </button>
     </li>
   )
 }

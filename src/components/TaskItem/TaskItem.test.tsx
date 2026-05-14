@@ -37,7 +37,7 @@ describe('TaskItem', () => {
     expect(span).toHaveTextContent('Buy milk')
   })
 
-  // --- Phase 3 toggle interaction tests ---
+  // --- Phase 3-01 toggle tests (preserved) ---
 
   it('calls onToggle with task id when checkbox is clicked', async () => {
     const onToggle = vi.fn()
@@ -54,9 +54,35 @@ describe('TaskItem', () => {
     expect(onToggle).toHaveBeenCalledWith('task-1')
   })
 
-  it('does not throw when onToggle is not provided (checkbox click no-ops)', async () => {
+  it('does not throw when onToggle is not provided', async () => {
     render(<TaskItem task={baseTask} />)
-    // No onToggle provided — clicking should not throw
     await expect(userEvent.click(screen.getByRole('checkbox'))).resolves.not.toThrow()
+  })
+
+  // --- Phase 3-02 delete tests ---
+
+  it('renders a delete button for each task item', () => {
+    render(<TaskItem task={baseTask} />)
+    expect(screen.getByRole('button', { name: /delete "buy milk"/i })).toBeInTheDocument()
+  })
+
+  it('calls onDelete with task id when delete button is clicked', async () => {
+    const onDelete = vi.fn()
+    render(<TaskItem task={baseTask} onDelete={onDelete} />)
+    await userEvent.click(screen.getByRole('button', { name: /delete/i }))
+    expect(onDelete).toHaveBeenCalledWith('task-1')
+    expect(onDelete).toHaveBeenCalledTimes(1)
+  })
+
+  it('renders delete button for completed tasks too', () => {
+    render(<TaskItem task={{ ...baseTask, completed: true }} />)
+    expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument()
+  })
+
+  it('does not throw when onDelete is not provided (delete click no-ops)', async () => {
+    render(<TaskItem task={baseTask} />)
+    await expect(
+      userEvent.click(screen.getByRole('button', { name: /delete/i }))
+    ).resolves.not.toThrow()
   })
 })
