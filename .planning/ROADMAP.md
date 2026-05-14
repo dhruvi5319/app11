@@ -35,7 +35,7 @@ Plans:
 - [ ] 01-02-PLAN.md — Data layer: Task types, UUID utility, localStorage adapter, client API module (TDD)
 
 ### Phase 2: Task Capture & Display
-**Status**: executing
+**Status**: awaiting verify
 **Goal**: Users can capture tasks and see them in a list that persists across browser sessions — the app's core value proposition is functional
 **Depends on**: Phase 1
 **Requirements**: TASK-01, TASK-02
