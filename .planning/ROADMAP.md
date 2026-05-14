@@ -52,8 +52,7 @@ Plans:
 - [x] 02-02: TaskList and TaskItem view components (F01: list render, empty state, persistence hydration on load)
 
 ### Phase 3: Task Actions
-**Status**: passed
-**Completed**: 2026-05-14
+**Status**: executing
 **Goal**: Users can close out finished work and remove unwanted tasks — the task lifecycle is complete
 **Depends on**: Phase 2
 **Requirements**: TASK-03, TASK-04
