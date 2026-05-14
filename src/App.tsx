@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { getTasks, createTask, updateTask } from './api/tasks'
+import { getTasks, createTask, updateTask, deleteTask } from './api/tasks'
 import type { Task } from './types/task'
 import { CreateTaskInput } from './components/CreateTaskInput/CreateTaskInput'
 import { TaskList } from './components/TaskList/TaskList'
@@ -24,11 +24,16 @@ function App() {
     setTasks(getTasks())
   }, [tasks])
 
+  const handleDelete = useCallback((id: string) => {
+    deleteTask(id)
+    setTasks(getTasks())
+  }, [])
+
   return (
     <main className={styles.container}>
       <h1 className={styles.heading}>TaskTracker</h1>
       <CreateTaskInput onCreate={handleCreate} />
-      <TaskList tasks={tasks} onToggle={handleToggle} />
+      <TaskList tasks={tasks} onToggle={handleToggle} onDelete={handleDelete} />
     </main>
   )
 }
