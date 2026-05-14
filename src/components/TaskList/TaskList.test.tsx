@@ -59,4 +59,11 @@ describe('TaskList', () => {
     render(<TaskList tasks={[makeTask('1', 'Buy milk')]} />)
     expect(screen.getByText('Buy milk')).toBeInTheDocument()
   })
+
+  it('passes onDelete to TaskItem — clicking delete button calls onDelete with task id', async () => {
+    const onDelete = vi.fn()
+    render(<TaskList tasks={[makeTask('1', 'Buy milk')]} onDelete={onDelete} />)
+    await userEvent.click(screen.getByRole('button', { name: /delete/i }))
+    expect(onDelete).toHaveBeenCalledWith('1')
+  })
 })
