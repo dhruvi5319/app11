@@ -55,3 +55,103 @@
 .deleteButton:active {
   background-color: #fee2e2;
 }
+
+.titleButton {
+  flex: 1;
+  font-size: 1rem;
+  color: #111827;
+  line-height: 1.4;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.titleButton:hover {
+  text-decoration: underline;
+  color: #4f46e5;
+}
+
+.titleButtonCompleted {
+  flex: 1;
+  font-size: 1rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+  line-height: 1.4;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.editRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.editInput {
+  flex: 1;
+  font-size: 1rem;
+  color: #111827;
+  border: 1px solid #6366f1;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.editInput:focus {
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+.editInputCompleted {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
+.saveButton {
+  padding: 0.25rem 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: #6366f1;
+  border: 1px solid #6366f1;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.saveButton:hover {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.cancelButton {
+  padding: 0.25rem 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cancelButton:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.editError {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.8125rem;
+  color: #dc2626;
+  padding-left: 0;
+}
