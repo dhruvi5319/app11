@@ -1,0 +1,33 @@
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  list-style: none;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.checkbox {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  cursor: default;
+  accent-color: #6366f1;
+}
+
+.title {
+  font-size: 1rem;
+  color: #111827;
+  line-height: 1.4;
+}
+
+.titleCompleted {
+  font-size: 1rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+  line-height: 1.4;
+}
