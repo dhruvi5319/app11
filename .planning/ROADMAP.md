@@ -13,7 +13,7 @@ TaskTracker v1 is a greenfield single-page application delivering five core task
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Foundation** - Scaffold the React + TypeScript + Vite project, implement the localStorage data layer, and establish the Task data model
-- [ ] **Phase 2: Task Capture & Display** - Users can create tasks and see them in a persistent list across browser sessions
+- [x] **Phase 2: Task Capture & Display** - Users can create tasks and see them in a persistent list across browser sessions
 - [ ] **Phase 3: Task Actions** - Users can mark tasks complete/incomplete and delete tasks from the list
 - [ ] **Phase 4: Task Editing** - Users can edit a task's title inline without leaving the list
 
@@ -35,7 +35,8 @@ Plans:
 - [ ] 01-02-PLAN.md — Data layer: Task types, UUID utility, localStorage adapter, client API module (TDD)
 
 ### Phase 2: Task Capture & Display
-**Status**: In Progress
+**Status**: passed
+**Completed**: 2026-05-14
 **Goal**: Users can capture tasks and see them in a list that persists across browser sessions — the app's core value proposition is functional
 **Depends on**: Phase 1
 **Requirements**: TASK-01, TASK-02
@@ -48,8 +49,8 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 02-01: CreateTaskInput component (F00: input field, submit, validation, inline error)
-- [ ] 02-02: TaskList and TaskItem view components (F01: list render, empty state, persistence hydration on load)
+- [x] 02-01: CreateTaskInput component (F00: input field, submit, validation, inline error)
+- [x] 02-02: TaskList and TaskItem view components (F01: list render, empty state, persistence hydration on load)
 
 ### Phase 3: Task Actions
 **Goal**: Users can close out finished work and remove unwanted tasks — the task lifecycle is complete
@@ -89,7 +90,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Not started | - |
-| 2. Task Capture & Display | 0/2 | Not started | - |
+| 1. Foundation | 2/2 | passed | 2026-05-14 |
+| 2. Task Capture & Display | 2/2 | passed | 2026-05-14 |
 | 3. Task Actions | 0/2 | Not started | - |
 | 4. Task Editing | 0/1 | Not started | - |
