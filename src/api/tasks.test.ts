@@ -1,170 +1,186 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { getTasks, createTask, updateTask, deleteTask } from './tasks'
 
-describe('tasks API', () => {
-  beforeEach(() => {
-    window.localStorage.clear()
+// In-memory localStorage mock
+const createLocalStorageMock = () => {
+  let store: Record<string, string> = {}
+  return {
+    getItem: (key: string) => store[key] ?? null,
+    setItem: (key: string, value: string) => { store[key] = value },
+    removeItem: (key: string) => { delete store[key] },
+    clear: () => { store = {} },
+    get length() { return Object.keys(store).length },
+    key: (index: number) => Object.keys(store)[index] ?? null,
+  }
+}
+
+const localStorageMock = createLocalStorageMock()
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+})
+
+beforeEach(() => {
+  localStorageMock.clear()
+})
+
+describe('getTasks', () => {
+  it('returns [] when localStorage is empty', () => {
+    expect(getTasks()).toEqual([])
   })
 
-  describe('getTasks()', () => {
-    it('returns [] when localStorage is empty', () => {
-      const tasks = getTasks()
-      expect(tasks).toEqual([])
-    })
-
-    it('returns [] when localStorage key does not exist', () => {
-      const tasks = getTasks()
-      expect(tasks).toEqual([])
-    })
-
-    it('returns deserialized tasks sorted by createdAt ASC', () => {
-      // Create tasks in non-chronological order
-      const task1 = createTask('Task A')
-      // Small delay via timestamp manipulation
-      const raw = window.localStorage.getItem('tasktracker_tasks')!
-      const tasks = JSON.parse(raw)
-      tasks[0].createdAt = '2024-01-02T00:00:00.000Z'
-      window.localStorage.setItem('tasktracker_tasks', JSON.stringify(tasks))
-
-      const task2 = createTask('Task B')
-      const raw2 = window.localStorage.getItem('tasktracker_tasks')!
-      const tasks2 = JSON.parse(raw2)
-      tasks2[1].createdAt = '2024-01-01T00:00:00.000Z'
-      window.localStorage.setItem('tasktracker_tasks', JSON.stringify(tasks2))
-
-      const sorted = getTasks()
-      expect(sorted[0].title).toBe(task2.title) // older createdAt
-      expect(sorted[1].title).toBe(task1.title) // newer createdAt
-    })
+  it("returns [] when localStorage key doesn't exist", () => {
+    expect(getTasks()).toEqual([])
   })
 
-  describe('createTask()', () => {
-    it('creates task with correct fields for valid title', () => {
-      const task = createTask('Buy milk')
-      expect(task.id).toBeTruthy()
-      expect(task.title).toBe('Buy milk')
-      expect(task.completed).toBe(false)
-      expect(task.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T/)
-      expect(task.updatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/)
-    })
+  it('returns deserialized tasks sorted by createdAt ASC', () => {
+    // Insert out-of-order
+    const t1 = createTask('First task')
+    // Manually insert a task with an earlier createdAt to test sorting
+    const existingTasks = JSON.parse(window.localStorage.getItem('tasktracker_tasks') ?? '[]')
+    const olderTask = {
+      id: 'older-id',
+      title: 'Older task',
+      completed: false,
+      createdAt: '2020-01-01T00:00:00.000Z',
+      updatedAt: '2020-01-01T00:00:00.000Z',
+    }
+    window.localStorage.setItem('tasktracker_tasks', JSON.stringify([...existingTasks, olderTask]))
 
-    it('trims whitespace from title', () => {
-      const task = createTask('  Buy milk  ')
-      expect(task.title).toBe('Buy milk')
-    })
+    const tasks = getTasks()
+    expect(tasks[0].id).toBe('older-id')
+    expect(tasks[1].id).toBe(t1.id)
+  })
+})
 
-    it('throws error with code TITLE_REQUIRED for empty string', () => {
-      expect(() => createTask('')).toThrow()
-      try {
-        createTask('')
-      } catch (err) {
-        expect((err as { code: string }).code).toBe('TITLE_REQUIRED')
-      }
-    })
-
-    it('throws error with code TITLE_REQUIRED for whitespace-only title', () => {
-      expect(() => createTask('   ')).toThrow()
-      try {
-        createTask('   ')
-      } catch (err) {
-        expect((err as { code: string }).code).toBe('TITLE_REQUIRED')
-      }
-    })
-
-    it('creates task for title that is exactly 500 characters', () => {
-      const maxTitle = 'a'.repeat(500)
-      const task = createTask(maxTitle)
-      expect(task.title).toBe(maxTitle)
-    })
-
-    it('throws error with code TITLE_TOO_LONG for title over 500 characters', () => {
-      expect(() => createTask('a'.repeat(501))).toThrow()
-      try {
-        createTask('a'.repeat(501))
-      } catch (err) {
-        expect((err as { code: string }).code).toBe('TITLE_TOO_LONG')
-      }
-    })
-
-    it('persists to localStorage (getTasks after createTask returns the task)', () => {
-      const task = createTask('Persisted task')
-      const tasks = getTasks()
-      expect(tasks).toHaveLength(1)
-      expect(tasks[0].id).toBe(task.id)
-    })
+describe('createTask', () => {
+  it("('Buy milk') → Task with id, title='Buy milk', completed=false, createdAt/updatedAt ISO strings", () => {
+    const task = createTask('Buy milk')
+    expect(task.id).toBeTruthy()
+    expect(task.title).toBe('Buy milk')
+    expect(task.completed).toBe(false)
+    expect(task.createdAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
+    expect(task.updatedAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
   })
 
-  describe('updateTask()', () => {
-    it('updates completed to true and refreshes updatedAt', () => {
-      const task = createTask('Test task')
-      const updated = updateTask(task.id, { completed: true })
-      expect(updated.completed).toBe(true)
-      expect(updated.updatedAt).toBeTruthy()
-    })
-
-    it('updates title and refreshes updatedAt', () => {
-      const task = createTask('Old title')
-      const updated = updateTask(task.id, { title: 'New title' })
-      expect(updated.title).toBe('New title')
-    })
-
-    it('trims whitespace from updated title', () => {
-      const task = createTask('Original')
-      const updated = updateTask(task.id, { title: '  New  ' })
-      expect(updated.title).toBe('New')
-    })
-
-    it('throws TITLE_REQUIRED for empty title update', () => {
-      const task = createTask('Test')
-      expect(() => updateTask(task.id, { title: '' })).toThrow()
-      try {
-        updateTask(task.id, { title: '' })
-      } catch (err) {
-        expect((err as { code: string }).code).toBe('TITLE_REQUIRED')
-      }
-    })
-
-    it('throws TASK_NOT_FOUND for non-existent id', () => {
-      expect(() => updateTask('non-existent-id', {})).toThrow()
-      try {
-        updateTask('non-existent-id', {})
-      } catch (err) {
-        expect((err as { code: string }).code).toBe('TASK_NOT_FOUND')
-      }
-    })
-
-    it('persists changes to localStorage', () => {
-      const task = createTask('Original')
-      updateTask(task.id, { title: 'Updated' })
-      const tasks = getTasks()
-      expect(tasks[0].title).toBe('Updated')
-    })
+  it("('  Buy milk  ') → title is trimmed to 'Buy milk'", () => {
+    const task = createTask('  Buy milk  ')
+    expect(task.title).toBe('Buy milk')
   })
 
-  describe('deleteTask()', () => {
-    it('removes task by id; getTasks no longer includes it', () => {
-      const task = createTask('To delete')
-      deleteTask(task.id)
-      const tasks = getTasks()
-      expect(tasks).toHaveLength(0)
-    })
+  it("('') → throws error with code TITLE_REQUIRED", () => {
+    expect(() => createTask('')).toThrow()
+    try {
+      createTask('')
+    } catch (err: unknown) {
+      expect((err as { code: string }).code).toBe('TITLE_REQUIRED')
+    }
+  })
 
-    it('throws TASK_NOT_FOUND for non-existent id', () => {
-      expect(() => deleteTask('non-existent-id')).toThrow()
-      try {
-        deleteTask('non-existent-id')
-      } catch (err) {
-        expect((err as { code: string }).code).toBe('TASK_NOT_FOUND')
-      }
-    })
+  it("('   ') → throws error with code TITLE_REQUIRED (whitespace only)", () => {
+    expect(() => createTask('   ')).toThrow()
+    try {
+      createTask('   ')
+    } catch (err: unknown) {
+      expect((err as { code: string }).code).toBe('TITLE_REQUIRED')
+    }
+  })
 
-    it('persists deletion to localStorage', () => {
-      const task1 = createTask('Keep this')
-      const task2 = createTask('Delete this')
-      deleteTask(task2.id)
-      const tasks = getTasks()
-      expect(tasks).toHaveLength(1)
-      expect(tasks[0].id).toBe(task1.id)
-    })
+  it("('a'.repeat(500)) → creates task (max length OK)", () => {
+    const task = createTask('a'.repeat(500))
+    expect(task.title).toBe('a'.repeat(500))
+  })
+
+  it("('a'.repeat(501)) → throws error with code TITLE_TOO_LONG", () => {
+    expect(() => createTask('a'.repeat(501))).toThrow()
+    try {
+      createTask('a'.repeat(501))
+    } catch (err: unknown) {
+      expect((err as { code: string }).code).toBe('TITLE_TOO_LONG')
+    }
+  })
+
+  it('persists to localStorage (getTasks after createTask returns the task)', () => {
+    const task = createTask('Buy milk')
+    const tasks = getTasks()
+    expect(tasks).toHaveLength(1)
+    expect(tasks[0].id).toBe(task.id)
+  })
+})
+
+describe('updateTask', () => {
+  it('(id, { completed: true }) → returns task with completed=true, updatedAt refreshed', () => {
+    const task = createTask('Buy milk')
+    const updated = updateTask(task.id, { completed: true })
+    expect(updated.completed).toBe(true)
+    // updatedAt is refreshed (same or later)
+    expect(new Date(updated.updatedAt).getTime()).toBeGreaterThanOrEqual(
+      new Date(task.updatedAt).getTime()
+    )
+  })
+
+  it("(id, { title: 'New title' }) → returns task with title='New title', updatedAt refreshed", () => {
+    const task = createTask('Buy milk')
+    const updated = updateTask(task.id, { title: 'New title' })
+    expect(updated.title).toBe('New title')
+  })
+
+  it("(id, { title: '  New  ' }) → title is trimmed to 'New'", () => {
+    const task = createTask('Buy milk')
+    const updated = updateTask(task.id, { title: '  New  ' })
+    expect(updated.title).toBe('New')
+  })
+
+  it("(id, { title: '' }) → throws TITLE_REQUIRED", () => {
+    const task = createTask('Buy milk')
+    expect(() => updateTask(task.id, { title: '' })).toThrow()
+    try {
+      updateTask(task.id, { title: '' })
+    } catch (err: unknown) {
+      expect((err as { code: string }).code).toBe('TITLE_REQUIRED')
+    }
+  })
+
+  it("('non-existent-id', {}) → throws TASK_NOT_FOUND", () => {
+    expect(() => updateTask('non-existent-id', {})).toThrow()
+    try {
+      updateTask('non-existent-id', {})
+    } catch (err: unknown) {
+      expect((err as { code: string }).code).toBe('TASK_NOT_FOUND')
+    }
+  })
+
+  it('persists changes to localStorage', () => {
+    const task = createTask('Buy milk')
+    updateTask(task.id, { completed: true })
+    const tasks = getTasks()
+    expect(tasks[0].completed).toBe(true)
+  })
+})
+
+describe('deleteTask', () => {
+  it("(id) → task removed; getTasks() no longer includes it", () => {
+    const task = createTask('Buy milk')
+    deleteTask(task.id)
+    const tasks = getTasks()
+    expect(tasks).toHaveLength(0)
+  })
+
+  it("('non-existent-id') → throws TASK_NOT_FOUND", () => {
+    expect(() => deleteTask('non-existent-id')).toThrow()
+    try {
+      deleteTask('non-existent-id')
+    } catch (err: unknown) {
+      expect((err as { code: string }).code).toBe('TASK_NOT_FOUND')
+    }
+  })
+
+  it('persists deletion to localStorage', () => {
+    const task = createTask('Buy milk')
+    createTask('Walk dog')
+    deleteTask(task.id)
+    const tasks = getTasks()
+    expect(tasks).toHaveLength(1)
+    expect(tasks[0].title).toBe('Walk dog')
   })
 })
