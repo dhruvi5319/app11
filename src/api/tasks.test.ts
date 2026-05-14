@@ -17,8 +17,7 @@ describe('getTasks()', () => {
   it('returns deserialized tasks sorted by createdAt ASC', () => {
     // Create tasks out of order
     const older = createTask('Older task')
-    // Manually insert a newer task with earlier timestamp to test sort
-    const tasks = JSON.parse(localStorage.getItem('tasktracker_tasks') ?? '[]')
+    // Create a task with an earlier timestamp to test sort
     const newer = {
       id: 'early-id',
       title: 'Earlier task',

@@ -1,5 +1,7 @@
 import type { Task } from '../types/task'
 
+const STORAGE_KEY = 'tasktracker_tasks'
+
 export class StorageReadError extends Error {
   code: 'STORAGE_READ_FAILED' | 'STORAGE_CORRUPT'
   constructor(code: 'STORAGE_READ_FAILED' | 'STORAGE_CORRUPT', message: string) {
@@ -19,9 +21,22 @@ export class StorageWriteError extends Error {
 }
 
 export function readTasks(): Task[] {
-  throw new Error('not implemented')
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw === null) return []
+    return JSON.parse(raw) as Task[]
+  } catch (err) {
+    if (err instanceof SyntaxError) {
+      throw new StorageReadError('STORAGE_CORRUPT', 'localStorage data is not valid JSON')
+    }
+    throw new StorageReadError('STORAGE_READ_FAILED', 'Failed to read from localStorage')
+  }
 }
 
-export function writeTasks(_tasks: Task[]): void {
-  throw new Error('not implemented')
+export function writeTasks(tasks: Task[]): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
+  } catch {
+    throw new StorageWriteError('Failed to write to localStorage')
+  }
 }
