@@ -36,7 +36,6 @@ Plans:
 
 ### Phase 2: Task Capture & Display
 **Status**: passed
-**Completed**: 2026-05-14
 **Goal**: Users can capture tasks and see them in a list that persists across browser sessions — the app's core value proposition is functional
 **Depends on**: Phase 1
 **Requirements**: TASK-01, TASK-02
@@ -53,6 +52,9 @@ Plans:
 - [x] 02-02: TaskList and TaskItem view components (F01: list render, empty state, persistence hydration on load)
 
 ### Phase 3: Task Actions
+**Status**: completed (2026-05-14)
+**Last Updated**: 2026-05-14T23:31:43Z
+**Completed**: 2026-05-14
 **Goal**: Users can close out finished work and remove unwanted tasks — the task lifecycle is complete
 **Depends on**: Phase 2
 **Requirements**: TASK-03, TASK-04
@@ -62,11 +64,11 @@ Plans:
   3. Completion state persists across page refresh — a completed task remains completed after reload
   4. User can click the delete control on any task and it is immediately removed from the list with no confirmation dialog
   5. Deleting the last task causes the empty state message to appear
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Task completion toggle (F02: checkbox, optimistic UI, persistence)
-- [ ] 03-02: Task deletion (F03: delete control, immediate removal, persistence)
+- [x] 03-01-PLAN.md — Task completion toggle (checkbox, optimistic UI, persistence)
+- [x] 03-02-PLAN.md — Task deletion (delete control, immediate removal, persistence)
 
 ### Phase 4: Task Editing
 **Goal**: Users can correct and refine task titles inline — the app handles the full task lifecycle from capture through completion
@@ -90,7 +92,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 2/2 | passed | 2026-05-14 |
-| 2. Task Capture & Display | 2/2 | passed | 2026-05-14 |
-| 3. Task Actions | 0/2 | Not started | - |
+| 1. Foundation | 2/2 | passed | 2026-05-11 |
+| 2. Task Capture & Display | 2/2 | passed | 2026-05-11 |
+| 3. Task Actions | 2/2 | passed | 2026-05-14 |
 | 4. Task Editing | 0/1 | Not started | - |

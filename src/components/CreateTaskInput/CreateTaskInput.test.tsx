@@ -1,13 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { CreateTaskInput } from './CreateTaskInput'
 
 describe('CreateTaskInput', () => {
-  beforeEach(() => {
-    // Reset any state between tests
-  })
-
   // US-0.1: visible on page load
   it('renders an input field and Add Task button', () => {
     render(<CreateTaskInput onCreate={vi.fn()} />)
@@ -77,20 +73,18 @@ describe('CreateTaskInput', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
-  // US-0.4: title too long rejected (using fireEvent.change for performance with long strings)
+  // US-0.4: title too long rejected
   it('shows "Task title must be 500 characters or fewer." for titles over 500 chars', async () => {
     const onCreate = vi.fn()
     render(<CreateTaskInput onCreate={onCreate} />)
     const longTitle = 'a'.repeat(501)
     fireEvent.change(screen.getByRole('textbox'), { target: { value: longTitle } })
     await userEvent.click(screen.getByRole('button', { name: /add task/i }))
-    expect(screen.getByRole('alert')).toHaveTextContent(
-      'Task title must be 500 characters or fewer.'
-    )
+    expect(screen.getByRole('alert')).toHaveTextContent('Task title must be 500 characters or fewer.')
     expect(onCreate).not.toHaveBeenCalled()
   })
 
-  // US-0.4: exactly 500 chars is accepted (using fireEvent.change for performance)
+  // US-0.4: exactly 500 chars is accepted
   it('accepts a title that is exactly 500 characters long', async () => {
     const onCreate = vi.fn()
     render(<CreateTaskInput onCreate={onCreate} />)

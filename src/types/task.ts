@@ -1,9 +1,9 @@
 export interface Task {
-  id: string; // UUID v4 — unique identifier, immutable after creation
-  title: string; // Non-empty string, max 500 chars, trimmed
+  id: string;         // UUID v4 — unique identifier, immutable after creation
+  title: string;      // Non-empty string, max 500 chars, trimmed
   completed: boolean; // false = incomplete, true = complete
-  createdAt: string; // ISO 8601 datetime string (UTC)
-  updatedAt: string; // ISO 8601 datetime string (UTC), refreshed on every mutation
+  createdAt: string;  // ISO 8601 datetime string (UTC)
+  updatedAt: string;  // ISO 8601 datetime string (UTC), refreshed on every mutation
 }
 
 export interface CreateTaskRequest {
