@@ -22,7 +22,7 @@ export class StorageWriteError extends Error {
 
 export function readTasks(): Task[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = window.localStorage.getItem(STORAGE_KEY)
     if (raw === null) return []
     return JSON.parse(raw) as Task[]
   } catch (err) {
@@ -35,7 +35,7 @@ export function readTasks(): Task[] {
 
 export function writeTasks(tasks: Task[]): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
   } catch {
     throw new StorageWriteError('Failed to write to localStorage')
   }

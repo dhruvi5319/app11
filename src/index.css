@@ -12,3 +12,9 @@ body {
   background-color: #f9fafb;
   color: #111827;
 }
+
+.inline-error {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: #dc2626;
+}
