@@ -43,7 +43,7 @@ export function CreateTaskInput({ onCreate }: CreateTaskInputProps) {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(e.target.value)
-    if (error) setError(null) // clear error on any input change
+    if (error) setError(null)  // clear error on any input change
   }
 
   return (
@@ -60,7 +60,11 @@ export function CreateTaskInput({ onCreate }: CreateTaskInputProps) {
           aria-describedby={error ? ERROR_ID : undefined}
           className={styles.input}
         />
-        <button type="button" onClick={handleSubmit} className={styles.button}>
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className={styles.button}
+        >
           Add Task
         </button>
       </div>
