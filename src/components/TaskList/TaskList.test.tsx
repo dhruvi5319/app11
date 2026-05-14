@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
+import userEvent from '@testing-library/user-event'
+import { describe, it, expect, vi } from 'vitest'
 import { TaskList } from './TaskList'
 import type { Task } from '../../types/task'
 
@@ -12,6 +13,8 @@ const makeTask = (id: string, title: string, completed = false): Task => ({
 })
 
 describe('TaskList', () => {
+  // --- Phase 2 render tests (preserved) ---
+
   it('shows empty state message when tasks array is empty', () => {
     render(<TaskList tasks={[]} />)
     expect(screen.getByText('No tasks yet. Add one above!')).toBeInTheDocument()
@@ -35,11 +38,25 @@ describe('TaskList', () => {
     expect(screen.queryByText('No tasks yet. Add one above!')).not.toBeInTheDocument()
   })
 
-  it('renders tasks in the order provided (oldest-first ordering is App.tsx responsibility)', () => {
+  it('renders tasks in the order provided', () => {
     const tasks = [makeTask('1', 'First task'), makeTask('2', 'Second task')]
     render(<TaskList tasks={tasks} />)
     const items = screen.getAllByRole('listitem')
     expect(items[0]).toHaveTextContent('First task')
     expect(items[1]).toHaveTextContent('Second task')
+  })
+
+  // --- Phase 3 onToggle pass-through tests ---
+
+  it('passes onToggle to TaskItem — clicking a checkbox calls onToggle with task id', async () => {
+    const onToggle = vi.fn()
+    render(<TaskList tasks={[makeTask('1', 'Buy milk')]} onToggle={onToggle} />)
+    await userEvent.click(screen.getByRole('checkbox'))
+    expect(onToggle).toHaveBeenCalledWith('1')
+  })
+
+  it('renders without errors when onToggle is not provided', () => {
+    render(<TaskList tasks={[makeTask('1', 'Buy milk')]} />)
+    expect(screen.getByText('Buy milk')).toBeInTheDocument()
   })
 })
