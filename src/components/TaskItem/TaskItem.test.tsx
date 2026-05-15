@@ -30,14 +30,13 @@ describe('TaskItem', () => {
     expect(screen.getByRole('checkbox')).toBeChecked()
   })
 
-  it('applies completed span to completed task title', () => {
-    const { container } = render(<TaskItem task={{ ...baseTask, completed: true }} />)
-    const span = container.querySelector('span')
-    expect(span).toBeInTheDocument()
-    expect(span).toHaveTextContent('Buy milk')
+  it('applies completed styling to completed task title button', () => {
+    render(<TaskItem task={{ ...baseTask, completed: true }} />)
+    const titleBtn = screen.getByRole('button', { name: /Edit "Buy milk"/ })
+    expect(titleBtn).toBeInTheDocument()
   })
 
-  // --- Phase 3-01 toggle tests (preserved) ---
+  // --- Phase 3 toggle interaction tests ---
 
   it('calls onToggle with task id when checkbox is clicked', async () => {
     const onToggle = vi.fn()
@@ -54,12 +53,12 @@ describe('TaskItem', () => {
     expect(onToggle).toHaveBeenCalledWith('task-1')
   })
 
-  it('does not throw when onToggle is not provided', async () => {
+  it('does not throw when onToggle is not provided (checkbox click no-ops)', async () => {
     render(<TaskItem task={baseTask} />)
     await expect(userEvent.click(screen.getByRole('checkbox'))).resolves.not.toThrow()
   })
 
-  // --- Phase 3-02 delete tests ---
+  // --- Phase 3-02 delete tests (preserved) ---
 
   it('renders a delete button for each task item', () => {
     render(<TaskItem task={baseTask} />)
@@ -84,5 +83,88 @@ describe('TaskItem', () => {
     await expect(
       userEvent.click(screen.getByRole('button', { name: /delete/i }))
     ).resolves.not.toThrow()
+  })
+
+  // --- Phase 4 edit mode tests ---
+
+  it('calls onStartEdit when title button is clicked', async () => {
+    const onStartEdit = vi.fn()
+    render(<TaskItem task={baseTask} onStartEdit={onStartEdit} />)
+    await userEvent.click(screen.getByRole('button', { name: /Edit "Buy milk"/ }))
+    expect(onStartEdit).toHaveBeenCalledWith('task-1')
+  })
+
+  it('shows edit input pre-populated with title when isEditing=true', () => {
+    render(<TaskItem task={baseTask} isEditing={true} />)
+    const input = screen.getByRole('textbox', { name: /Edit title/ })
+    expect(input).toBeInTheDocument()
+    expect(input).toHaveValue('Buy milk')
+  })
+
+  it('shows Save and Cancel buttons in edit mode', () => {
+    render(<TaskItem task={baseTask} isEditing={true} />)
+    expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
+  })
+
+  it('calls onEdit with trimmed new title when Save is clicked', async () => {
+    const onEdit = vi.fn()
+    render(<TaskItem task={baseTask} isEditing={true} onEdit={onEdit} />)
+    const input = screen.getByRole('textbox', { name: /Edit title/ })
+    await userEvent.clear(input)
+    await userEvent.type(input, 'Updated title')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onEdit).toHaveBeenCalledWith('task-1', 'Updated title')
+  })
+
+  it('calls onEdit when Enter is pressed in the edit input', async () => {
+    const onEdit = vi.fn()
+    render(<TaskItem task={baseTask} isEditing={true} onEdit={onEdit} />)
+    const input = screen.getByRole('textbox', { name: /Edit title/ })
+    await userEvent.clear(input)
+    await userEvent.type(input, 'New title{Enter}')
+    expect(onEdit).toHaveBeenCalledWith('task-1', 'New title')
+  })
+
+  it('calls onCancelEdit when Cancel is clicked', async () => {
+    const onCancelEdit = vi.fn()
+    render(<TaskItem task={baseTask} isEditing={true} onCancelEdit={onCancelEdit} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(onCancelEdit).toHaveBeenCalledWith('task-1')
+  })
+
+  it('calls onCancelEdit when Escape is pressed', async () => {
+    const onCancelEdit = vi.fn()
+    render(<TaskItem task={baseTask} isEditing={true} onCancelEdit={onCancelEdit} />)
+    const input = screen.getByRole('textbox', { name: /Edit title/ })
+    await userEvent.type(input, '{Escape}')
+    expect(onCancelEdit).toHaveBeenCalledWith('task-1')
+  })
+
+  it('shows validation error and does not call onEdit for empty title', async () => {
+    const onEdit = vi.fn()
+    render(<TaskItem task={baseTask} isEditing={true} onEdit={onEdit} />)
+    const input = screen.getByRole('textbox', { name: /Edit title/ })
+    await userEvent.clear(input)
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onEdit).not.toHaveBeenCalled()
+    expect(screen.getByRole('alert')).toHaveTextContent('Title cannot be empty')
+  })
+
+  it('shows validation error for whitespace-only title', async () => {
+    const onEdit = vi.fn()
+    render(<TaskItem task={baseTask} isEditing={true} onEdit={onEdit} />)
+    const input = screen.getByRole('textbox', { name: /Edit title/ })
+    await userEvent.clear(input)
+    await userEvent.type(input, '   ')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onEdit).not.toHaveBeenCalled()
+    expect(screen.getByRole('alert')).toHaveTextContent('Title cannot be empty')
+  })
+
+  it('does not show checkbox or delete button in edit mode', () => {
+    render(<TaskItem task={baseTask} isEditing={true} />)
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Delete/ })).not.toBeInTheDocument()
   })
 })

@@ -66,4 +66,40 @@ describe('TaskList', () => {
     await userEvent.click(screen.getByRole('button', { name: /delete/i }))
     expect(onDelete).toHaveBeenCalledWith('1')
   })
+
+  // --- Phase 4 edit pass-through tests ---
+
+  it('renders task in edit mode when editingId matches task id', () => {
+    render(
+      <TaskList
+        tasks={[makeTask('1', 'Buy milk')]}
+        editingId="1"
+      />
+    )
+    expect(screen.getByRole('textbox', { name: /Edit title/ })).toBeInTheDocument()
+  })
+
+  it('does not render edit mode for non-matching task', () => {
+    render(
+      <TaskList
+        tasks={[makeTask('1', 'Buy milk'), makeTask('2', 'Walk dog')]}
+        editingId="1"
+      />
+    )
+    // Task 1 is in edit mode, Task 2 is not
+    expect(screen.getByRole('textbox', { name: /Edit title/ })).toBeInTheDocument()
+    expect(screen.getByText('Walk dog')).toBeInTheDocument()
+  })
+
+  it('calls onStartEdit when title button clicked', async () => {
+    const onStartEdit = vi.fn()
+    render(
+      <TaskList
+        tasks={[makeTask('1', 'Buy milk')]}
+        onStartEdit={onStartEdit}
+      />
+    )
+    await userEvent.click(screen.getByRole('button', { name: /Edit "Buy milk"/ }))
+    expect(onStartEdit).toHaveBeenCalledWith('1')
+  })
 })

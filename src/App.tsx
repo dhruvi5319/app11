@@ -7,6 +7,7 @@ import styles from './App.module.css'
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([])
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
 
   useEffect(() => {
     setTasks(getTasks())
@@ -27,13 +28,37 @@ function App() {
   const handleDelete = useCallback((id: string) => {
     deleteTask(id)
     setTasks(getTasks())
+    // If the deleted task was being edited, clear edit state
+    setEditingTaskId((prev) => (prev === id ? null : prev))
+  }, [])
+
+  const handleStartEdit = useCallback((id: string) => {
+    setEditingTaskId(id)
+  }, [])
+
+  const handleEdit = useCallback((id: string, newTitle: string) => {
+    updateTask(id, { title: newTitle })
+    setTasks(getTasks())
+    setEditingTaskId(null)
+  }, [])
+
+  const handleCancelEdit = useCallback((_id: string) => {
+    setEditingTaskId(null)
   }, [])
 
   return (
     <main className={styles.container}>
       <h1 className={styles.heading}>TaskTracker</h1>
       <CreateTaskInput onCreate={handleCreate} />
-      <TaskList tasks={tasks} onToggle={handleToggle} onDelete={handleDelete} />
+      <TaskList
+        tasks={tasks}
+        onToggle={handleToggle}
+        onDelete={handleDelete}
+        editingId={editingTaskId}
+        onStartEdit={handleStartEdit}
+        onEdit={handleEdit}
+        onCancelEdit={handleCancelEdit}
+      />
     </main>
   )
 }

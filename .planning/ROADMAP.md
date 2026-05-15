@@ -71,7 +71,8 @@ Plans:
 - [x] 03-02-PLAN.md — Task deletion (delete control, immediate removal, persistence)
 
 ### Phase 4: Task Editing
-**Status**: passed
+**Status**: completed (2026-05-15)
+**Last Updated**: 2026-05-15T00:08:40Z
 **Goal**: Users can correct and refine task titles inline — the app handles the full task lifecycle from capture through completion
 **Depends on**: Phase 3
 **Requirements**: TASK-05
