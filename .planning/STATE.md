@@ -2,16 +2,16 @@
 pivota_spec_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: phase_complete
-stopped_at: Phase 3 complete — verification passed
-last_updated: "2026-05-14"
-last_activity: "2026-05-14 — Phase 3 verified passed: completion toggle + task deletion complete (TASK-03, TASK-04)"
+status: completed
+stopped_at: Completed 04-task-editing-01-PLAN.md
+last_updated: "2026-05-15T00:01:58.331Z"
+last_activity: "2026-05-14 — Plan 03-02 complete: task delete wired; Phase 3 (TASK-03 + TASK-04) done"
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 7
-  completed_plans: 6
-  percent: 75
+  completed_plans: 7
+  percent: 100
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-11)
 
 **Core value:** Users can quickly capture and track tasks so nothing falls through the cracks.
-**Current focus:** Phase 3 — Task Actions
+**Current focus:** Phase 4 — Task Editing (complete — all phases done)
 
 ## Current Position
 
-Phase: 3 of 4 (Task Actions)
-Plan: 2 of 2 in current phase (Plans 01 and 02 complete — Phase 3 done)
-Status: Phase 3 complete
-Last activity: 2026-05-14 — Plan 03-02 complete: task delete wired; Phase 3 (TASK-03 + TASK-04) done
+Phase: 4 of 4 (Task Editing)
+Plan: 1 of 1 in current phase (Plan 01 complete — Phase 4 done — milestone v1.0 complete)
+Status: All phases complete
+Last activity: 2026-05-15 — Plan 04-01 complete: inline task editing wired; Phase 4 (TASK-05) done
 
-Progress: [███░░░░░░░] 33%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Progress: [███░░░░░░░] 33%
 |------|----------|-------|-------|
 | Phase 02-task-capture-display P01 | 5min | 2 tasks | 5 files |
 | Phase 02-task-capture-display P02 | 2min | 3 tasks | 8 files |
+| Phase 04-task-editing P01 | 3min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,8 @@ Recent decisions affecting current work:
 - [Phase 03-task-actions]: handleToggle uses useCallback([tasks]) dependency to read current task.completed before flipping
 - [Phase 03-task-actions]: Used text Delete label instead of SVG icon for dependency-free accessible button
 - [Phase 03-task-actions]: handleDelete uses useCallback([]) — no tasks dependency needed since deleteTask only requires id
+- [Phase 04-task-editing]: Edit mode controlled by parent via editingId prop (not local state) — enforces single-edit-at-a-time at App level
+- [Phase 04-task-editing]: Task title rendered as button instead of span — enables click-to-edit without separate icon
 
 ### Pending Todos
 
@@ -86,6 +89,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-14T15:44:15.725Z
-Stopped at: Completed 03-task-actions-02-PLAN.md
+Last session: 2026-05-15T00:01:58.330Z
+Stopped at: Completed 04-task-editing-01-PLAN.md
 Resume file: None
